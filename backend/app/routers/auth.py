@@ -19,9 +19,10 @@ def login(payload: schemas.LoginRequest, db: Session = Depends(get_db)):
     return {"token": token, "user": user}
 
 
-@router.post("/auth/signup", response_model=schemas.LoginResponse)
+@router.post("/auth/signup", response_model=schemas.UserOut, status_code=201)
 def signup(payload: schemas.SignupRequest, db: Session = Depends(get_db)):
-    """Self-registration: always a student, in no batch until an instructor adds them to one."""
+    """Self-registration: always a student, in no batch until an instructor adds them to one.
+    Doesn't log them in — the sign-up page sends them to the login form."""
     email = auth.normalize_email(payload.email)
     signup_limiter.hit(email)
     signup_total_limiter.hit("all")
@@ -33,4 +34,4 @@ def signup(payload: schemas.SignupRequest, db: Session = Depends(get_db)):
     db.add(user)
     db.commit()
     db.refresh(user)
-    return {"token": auth.create_access_token(user.id, user.role), "user": user}
+    return user

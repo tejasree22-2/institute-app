@@ -1,0 +1,43 @@
+# Render Blueprint (optional — the same settings can be entered by hand in the dashboard).
+# New → Blueprint → pick this repo. Creates two free services:
+#   institute-app-api  the FastAPI backend (native Python). Keeps nothing on disk: the data, uploads
+#                      and synced worksheets all live in the Supabase Postgres database.
+#   institute-app-web  the static frontend.
+# The two services' URLs are set in code: FRONTEND_URLS in backend/app/config.py, API_BASE in frontend/js/config.js.
+services:
+  - type: web
+    name: institute-app-api
+    runtime: python
+    region: singapore  # same region as the Supabase project keeps DB round trips short
+    plan: free
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: cd backend && exec uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1 --proxy-headers --forwarded-allow-ips='*'
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: APP_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false  # Supabase → Connect → Session pooler URI, with your DB password filled in
+      - key: JWT_SECRET
+        generateValue: true
+      - key: WORKSHEET_REPO_URL
+        value: https://raw.githubusercontent.com/aikaryashala/first-steps/main/docs/
+
+  - type: web
+    name: institute-app-web
+    runtime: static
+    rootDir: frontend
+    buildCommand: echo "static files, nothing to build"  # the API URL is set in frontend/js/config.js
+    staticPublishPath: .
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin

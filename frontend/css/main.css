@@ -285,6 +285,12 @@ textarea { resize: vertical; }
 .login-switch { margin: 16px 0 0; text-align: center; font-size: 14px; color: var(--text-muted); }
 .login-switch a { color: var(--primary); font-weight: 600; text-decoration: none; }
 .login-switch a:hover { text-decoration: underline; }
+.login-success {
+  background: var(--green-bg); color: var(--green); font-size: 13px;
+  padding: 10px 12px; border-radius: 8px; margin-bottom: 16px; display: none;
+}
+.student-add { display: flex; gap: 8px; justify-content: flex-end; align-items: center; }
+.student-add select { width: auto; min-width: 180px; }
 .login-hint {
   margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--border);
   font-size: 12px; color: var(--text-muted); line-height: 1.6;

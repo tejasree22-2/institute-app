@@ -61,6 +61,19 @@ class BatchMemberOut(BaseModel):
     email: str
 
 
+class BatchRefOut(BaseModel):
+    id: int
+    name: str
+
+
+class StudentListItemOut(BaseModel):
+    id: int
+    name: str
+    email: str
+    created_at: Optional[datetime] = None
+    batches: list[BatchRefOut]
+
+
 class BatchDetailOut(BaseModel):
     id: int
     name: str

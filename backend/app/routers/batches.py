@@ -119,17 +119,26 @@ def remove_student(
     return {"ok": True}
 
 
-@router.get("/students/unassigned", response_model=list[schemas.BatchMemberOut])
-def unassigned_students(
+@router.get("/students", response_model=list[schemas.StudentListItemOut])
+def list_students(
     db: Session = Depends(get_db),
     _instructor: models.User = Depends(auth.require_instructor),
 ):
-    """Students in no batch — mostly people who signed up themselves and are waiting to be added."""
-    in_a_batch = db.query(models.BatchStudent.student_id)
-    students = (
-        db.query(models.User)
-        .filter(models.User.role == "student", models.User.id.notin_(in_a_batch))
-        .order_by(models.User.created_at.desc())
-        .all()
-    )
-    return [schemas.BatchMemberOut(id=s.id, name=s.name, email=s.email) for s in students]
+    """Every student with their batches — students who signed up and wait for a batch come first."""
+    students = db.query(models.User).filter(models.User.role == "student").all()
+    links = db.query(models.BatchStudent).all()
+    batch_names = {b.id: b.name for b in db.query(models.Batch).all()}
+    batches_of: dict[int, list[schemas.BatchRefOut]] = {}
+    for link in links:
+        batches_of.setdefault(link.student_id, []).append(
+            schemas.BatchRefOut(id=link.batch_id, name=batch_names.get(link.batch_id, "?")))
+    items = [
+        schemas.StudentListItemOut(
+            id=s.id, name=s.name, email=s.email, created_at=s.created_at,
+            batches=sorted(batches_of.get(s.id, []), key=lambda b: b.name),
+        )
+        for s in students
+    ]
+    # waiting students first, then newest sign-ups first
+    items.sort(key=lambda s: (bool(s.batches), -(s.created_at.timestamp() if s.created_at else 0)))
+    return items

@@ -11,6 +11,16 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("demo-hint").hidden = false;
   }
 
+  // coming from the sign-up page: confirm the new account and pre-fill its email
+  const signedUp = new URLSearchParams(window.location.search).get("signed_up");
+  if (signedUp) {
+    const ok = document.getElementById("login-success");
+    ok.textContent = "Account created — log in with your email and password.";
+    ok.style.display = "block";
+    document.getElementById("email").value = signedUp;
+    document.getElementById("password").focus();
+  }
+
   const form = document.getElementById("login-form");
   const errorBox = document.getElementById("login-error");
 

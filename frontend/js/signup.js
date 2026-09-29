@@ -26,14 +26,9 @@ document.addEventListener("DOMContentLoaded", () => {
     submitBtn.textContent = "Creating account…";
 
     try {
-      const data = await api("/auth/signup", { method: "POST", body: { name, email, password }, auth: false });
-      if (!data || !data.token) {
-        // an empty reply means the request didn't reach the backend (API_BASE in js/config.js)
-        throw new Error("Can't reach the server — check the API address in js/config.js");
-      }
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      window.location.href = "student/dashboard.html";
+      await api("/auth/signup", { method: "POST", body: { name, email, password }, auth: false });
+      // no automatic login: the login page confirms the account and asks them to log in
+      window.location.href = `index.html?signed_up=${encodeURIComponent(email)}`;
     } catch (err) {
       showError(err.message || "Sign-up failed");
       submitBtn.disabled = false;
