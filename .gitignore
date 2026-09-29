@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+backend/data/app.db
+backend/runner_workdir/*
+!backend/runner_workdir/.gitkeep
+backend/data/worksheet_uploads/
+
+# local-only files
+.env
+backend/data/worksheet_content/
