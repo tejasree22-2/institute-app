@@ -289,6 +289,12 @@ textarea { resize: vertical; }
   background: var(--green-bg); color: var(--green); font-size: 13px;
   padding: 10px 12px; border-radius: 8px; margin-bottom: 16px; display: none;
 }
+.batch-chip { display: inline-flex; align-items: center; gap: 4px; margin: 2px 0; }
+.batch-chip button {
+  border: 0; background: none; padding: 0 0 0 2px; cursor: pointer; color: inherit;
+  display: inline-flex; font-size: 13px; line-height: 1; opacity: .6;
+}
+.batch-chip button:hover { opacity: 1; color: var(--red); }
 .student-add { display: flex; gap: 8px; justify-content: flex-end; align-items: center; }
 .student-add select { width: auto; min-width: 180px; }
 .login-hint {

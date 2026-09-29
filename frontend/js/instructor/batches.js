@@ -76,7 +76,10 @@ async function renderStudents() {
                 <td>${escapeHtml(st.email)}</td>
                 <td class="small-muted">${formatDate(st.created_at)}</td>
                 <td>${st.batches.length
-                  ? st.batches.map((b) => `<span class="pill pill-grey">${escapeHtml(b.name)}</span>`).join(" ")
+                  ? st.batches.map((b) => `
+                      <span class="pill pill-grey batch-chip">${escapeHtml(b.name)}<button type="button"
+                        title="Remove from ${escapeHtml(b.name)}" aria-label="Remove from ${escapeHtml(b.name)}"
+                        onclick="removeStudentFromBatch(${st.id}, ${b.id})"><i class="ti ti-x"></i></button></span>`).join(" ")
                   : `<span class="pill pill-amber">Waiting for a batch</span>`}</td>
                 <td>
                   ${allBatches.length === 0
@@ -96,6 +99,19 @@ async function renderStudents() {
       </table>`;
   } catch (err) {
     el.innerHTML = `<p style="color:var(--red);">${escapeHtml(err.message)}</p>`;
+  }
+}
+
+async function removeStudentFromBatch(studentId, batchId) {
+  const batch = allBatches.find((b) => b.id === batchId);
+  if (!confirm(`Remove this student from ${batch ? batch.name : "the batch"}? They'll stop seeing its work (their submissions are kept).`)) return;
+  try {
+    await api(`/batches/${batchId}/students/${studentId}`, { method: "DELETE" });
+    await loadBatches();
+    if (selectedBatchId === batchId) await renderBatchDetail();
+    await renderStudents();
+  } catch (err) {
+    alert("Could not remove student: " + err.message);
   }
 }
 
