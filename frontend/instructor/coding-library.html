@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Coding Library — Institute App</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <div class="topbar">
+      <div class="brand"><span class="dot"></span>Institute App</div>
+      <nav>
+        <a href="library.html" class="active">Library</a>
+        <a href="batches.html">Batches</a>
+        <a href="performance.html">Performance</a>
+      </nav>
+      <div class="userbox">
+        <span class="avatar" id="user-avatar"></span>
+        <span id="user-name"></span>
+        <button class="btn-logout" onclick="logout()">Log out</button>
+      </div>
+    </div>
+
+    <div class="page">
+      <div class="page-header">
+        <div>
+          <a href="library.html" class="back-link"><i class="ti ti-arrow-left"></i> Library</a>
+          <h1><i class="ti ti-code"></i> Coding Tasks</h1>
+          <p class="subtitle">Coding questions available to assign to your batches.</p>
+        </div>
+        <a href="question-editor.html" class="btn btn-primary"><i class="ti ti-plus"></i> New question</a>
+      </div>
+
+      <div class="card">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Difficulty</th>
+              <th>Test cases</th>
+              <th>Assigned to</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="library-tbody">
+            <tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:30px;">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Assign modal -->
+  <div class="modal-overlay" id="assign-modal" hidden>
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Assign "<span id="assign-question-title"></span>" to batches</h3>
+        <button class="modal-close" onclick="closeAssignModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="assign-batch-list">
+        Loading batches…
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeAssignModal()">Cancel</button>
+        <button class="btn btn-primary" id="assign-confirm-btn">Assign</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/instructor/coding-library.js"></script>
+</body>
+</html>

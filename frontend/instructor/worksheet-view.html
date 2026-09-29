@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Worksheet — Institute App</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body class="ws-page">
+  <div class="app-shell">
+    <div class="topbar">
+      <div class="brand"><span class="dot"></span>Institute App</div>
+      <nav>
+        <a href="library.html" class="active">Library</a>
+        <a href="batches.html">Batches</a>
+        <a href="performance.html">Performance</a>
+      </nav>
+      <div class="userbox">
+        <span class="avatar" id="user-avatar"></span>
+        <span id="user-name"></span>
+        <button class="btn-logout" onclick="logout()">Log out</button>
+      </div>
+    </div>
+
+    <div class="page">
+      <div class="page-header">
+        <div>
+          <a href="worksheets.html" class="back-link" id="back-link"><i class="ti ti-arrow-left"></i> <span>Worksheets</span></a>
+          <h1 id="w-title">Loading…</h1>
+          <p class="subtitle" id="w-assigned"></p>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <a class="btn btn-secondary btn-sm" id="edit-link" href="#" title="Edit"><i class="ti ti-edit"></i></a>
+          <button class="btn btn-primary btn-sm" id="assign-btn" disabled><i class="ti ti-send"></i> Assign to batch</button>
+        </div>
+      </div>
+
+      <div id="viewer"></div>
+    </div>
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/worksheet-viewer.js"></script>
+  <script src="../js/instructor/assign-sheets.js"></script>
+  <script src="../js/instructor/worksheet-view.js"></script>
+</body>
+</html>

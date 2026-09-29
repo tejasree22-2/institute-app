@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Performance — Institute App</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <div class="topbar">
+      <div class="brand"><span class="dot"></span>Institute App</div>
+      <nav>
+        <a href="library.html">Library</a>
+        <a href="batches.html">Batches</a>
+        <a href="performance.html" class="active">Performance</a>
+      </nav>
+      <div class="userbox">
+        <span class="avatar" id="user-avatar"></span>
+        <span id="user-name"></span>
+        <button class="btn-logout" onclick="logout()">Log out</button>
+      </div>
+    </div>
+
+    <div class="page">
+      <div class="page-header">
+        <div>
+          <h1>Performance</h1>
+          <p class="subtitle">Pick a batch and a task to see how each student is doing.</p>
+        </div>
+      </div>
+
+      <div class="card section-card">
+        <div class="perf-filters">
+          <div class="field">
+            <label for="filter-batch">Batch</label>
+            <select id="filter-batch"><option value="">Select a batch…</option></select>
+          </div>
+          <div class="field">
+            <label for="filter-type">Task type</label>
+            <select id="filter-type" disabled>
+              <option value="coding">Coding</option>
+              <option value="worksheet">Worksheet</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="filter-item" id="filter-item-label">Question</label>
+            <select id="filter-item" disabled><option value="">Select a batch first…</option></select>
+          </div>
+          <div class="field" id="filter-sheet-field" hidden>
+            <label for="filter-sheet">Sheet</label>
+            <select id="filter-sheet"></select>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="perf-table-card" style="display:none;">
+        <div class="perf-summary" id="perf-summary"></div>
+        <table class="data-table">
+          <thead id="perf-thead"></thead>
+          <tbody id="perf-tbody"></tbody>
+        </table>
+      </div>
+
+      <div class="empty-state card" id="perf-empty" style="padding: 40px;">
+        <div class="icon"><i class="ti ti-chart-bar"></i></div>
+        <div id="perf-empty-text">Choose a batch and a task above to see student performance.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Submission history modal -->
+  <div class="modal-overlay" id="history-modal" hidden>
+    <div class="modal" style="max-width: 640px;">
+      <div class="modal-header">
+        <h3 id="history-title">Submission history</h3>
+        <button class="modal-close" onclick="closeHistoryModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="history-body">Loading…</div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeHistoryModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/worksheet-viewer.js"></script>
+  <script src="../js/instructor/performance.js"></script>
+</body>
+</html>

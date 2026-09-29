@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Question Editor — Institute App</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css" />
+  <link rel="stylesheet" href="../css/main.css" />
+  <style>
+    .code-host { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+    .code-host .cm-editor { height: 220px; font-size: 13.5px; }
+    .code-host.tall .cm-editor { height: 280px; }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <div class="topbar">
+      <div class="brand"><span class="dot"></span>Institute App</div>
+      <nav>
+        <a href="library.html" class="active">Library</a>
+        <a href="batches.html">Batches</a>
+        <a href="performance.html">Performance</a>
+      </nav>
+      <div class="userbox">
+        <span class="avatar" id="user-avatar"></span>
+        <span id="user-name"></span>
+        <button class="btn-logout" onclick="logout()">Log out</button>
+      </div>
+    </div>
+
+    <div class="page">
+      <div class="page-header">
+        <div>
+          <h1 id="page-title">New Question</h1>
+          <p class="subtitle">Write the question, add test cases, then verify your reference solution before saving.</p>
+        </div>
+        <div style="display:flex; gap:10px;">
+          <a href="coding-library.html" class="btn btn-secondary">Cancel</a>
+          <button class="btn btn-primary" id="save-btn" disabled title="Verify all test cases first">
+            <i class="ti ti-device-floppy"></i> Save to library
+          </button>
+        </div>
+      </div>
+
+      <!-- (a) Title / difficulty / description -->
+      <div class="card section-card">
+        <div class="section-title"><i class="ti ti-file-description"></i> Question details</div>
+        <div class="form-row">
+          <div class="field">
+            <label for="f-title">Title</label>
+            <input type="text" id="f-title" placeholder="e.g. Sum of Two Numbers" />
+          </div>
+          <div class="field" style="max-width:200px;">
+            <label for="f-difficulty">Difficulty</label>
+            <select id="f-difficulty">
+              <option value="easy">Easy</option>
+              <option value="medium">Medium</option>
+              <option value="hard">Hard</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="f-description">Problem description (Markdown)</label>
+          <textarea id="f-description" rows="6" placeholder="Describe the problem. Markdown is supported."></textarea>
+        </div>
+        <div class="field">
+          <label>Starter code (shown to students)</label>
+          <div class="code-host" id="starter-code-host"></div>
+        </div>
+      </div>
+
+      <!-- (b) Test cases -->
+      <div class="card section-card">
+        <div class="section-title"><i class="ti ti-list-check"></i> Test cases</div>
+        <table class="tc-table">
+          <thead>
+            <tr>
+              <th>Input (stdin)</th>
+              <th>Expected output (stdout)</th>
+              <th class="col-hidden">Hidden</th>
+              <th class="col-actions"></th>
+            </tr>
+          </thead>
+          <tbody id="tc-tbody"></tbody>
+        </table>
+        <button class="btn btn-secondary btn-sm" id="add-tc-btn"><i class="ti ti-plus"></i> Add test case</button>
+      </div>
+
+      <!-- (c) Verify -->
+      <div class="card section-card verify-panel">
+        <div class="section-title"><i class="ti ti-shield-check"></i> Verify your solution</div>
+        <p class="small-muted" style="margin-top:-8px;">This reference solution is never shown to students. It must pass every test case above before the question can be saved.</p>
+        <div class="field">
+          <label>Reference solution</label>
+          <div class="code-host tall" id="reference-code-host"></div>
+        </div>
+        <button class="btn btn-secondary" id="verify-btn"><i class="ti ti-player-play"></i> Run all tests</button>
+
+        <div style="margin-top:16px;">
+          <div class="verify-banner" id="verify-banner-success"><i class="ti ti-circle-check"></i> All test cases passed — you can now save this question to the library.</div>
+          <div class="verify-banner" id="verify-banner-fail"><i class="ti ti-alert-triangle"></i> Not all test cases passed yet.</div>
+          <div id="verify-results"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script type="module" src="../js/instructor/question-editor.js"></script>
+</body>
+</html>

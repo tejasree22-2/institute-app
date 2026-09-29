@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Worksheet Editor — Institute App</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <div class="topbar">
+      <div class="brand"><span class="dot"></span>Institute App</div>
+      <nav>
+        <a href="library.html" class="active">Library</a>
+        <a href="batches.html">Batches</a>
+        <a href="performance.html">Performance</a>
+      </nav>
+      <div class="userbox">
+        <span class="avatar" id="user-avatar"></span>
+        <span id="user-name"></span>
+        <button class="btn-logout" onclick="logout()">Log out</button>
+      </div>
+    </div>
+
+    <div class="page">
+      <div class="page-header">
+        <div>
+          <a href="worksheets.html" class="back-link"><i class="ti ti-arrow-left"></i> Worksheets</a>
+          <h1 id="page-title">New Worksheet</h1>
+          <p class="subtitle">Add a title, then attach the Topic, Questions and Answers files. Verify before assigning to a batch.</p>
+        </div>
+        <a href="worksheets.html" class="btn btn-secondary">Done</a>
+      </div>
+
+      <!-- (a) Details -->
+      <div class="card section-card">
+        <div class="section-title"><i class="ti ti-file-description"></i> Worksheet details</div>
+        <div class="field">
+          <label for="f-title">Title</label>
+          <input type="text" id="f-title" placeholder="e.g. Plotting Equations" />
+        </div>
+        <div class="field">
+          <label for="f-description">Description (shown to students)</label>
+          <textarea id="f-description" rows="3" placeholder="What this worksheet covers."></textarea>
+        </div>
+        <button class="btn btn-primary" id="save-details-btn"><i class="ti ti-device-floppy"></i> Save details</button>
+      </div>
+
+      <!-- (b) Files -->
+      <div class="card section-card" id="files-section">
+        <div class="section-title"><i class="ti ti-paperclip"></i> Files</div>
+        <p class="small-muted" id="files-hint" style="margin-top:-8px;">Save the worksheet details above first, then attach files.</p>
+        <div id="file-slots" hidden></div>
+      </div>
+
+      <!-- (c) Verify -->
+      <div class="card section-card verify-panel" id="verify-section" hidden>
+        <div class="section-title"><i class="ti ti-shield-check"></i> Verify</div>
+        <p class="small-muted" style="margin-top:-8px;">All three files (Topic, Questions, Answers) must be uploaded before this worksheet can be assigned to a batch.</p>
+        <button class="btn btn-secondary" id="verify-btn"><i class="ti ti-player-play"></i> Verify worksheet</button>
+        <div style="margin-top:16px;">
+          <div class="verify-banner" id="verify-banner-success"><i class="ti ti-circle-check"></i> All files present — you can now assign this worksheet to a batch from the Worksheets list.</div>
+          <div class="verify-banner" id="verify-banner-fail"><i class="ti ti-alert-triangle"></i> <span id="verify-fail-text">Not all files are uploaded yet.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/instructor/worksheet-editor.js"></script>
+</body>
+</html>

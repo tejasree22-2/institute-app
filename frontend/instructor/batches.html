@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Batches — Institute App</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <div class="topbar">
+      <div class="brand"><span class="dot"></span>Institute App</div>
+      <nav>
+        <a href="library.html">Library</a>
+        <a href="batches.html" class="active">Batches</a>
+        <a href="performance.html">Performance</a>
+      </nav>
+      <div class="userbox">
+        <span class="avatar" id="user-avatar"></span>
+        <span id="user-name"></span>
+        <button class="btn-logout" onclick="logout()">Log out</button>
+      </div>
+    </div>
+
+    <div class="page">
+      <div class="page-header">
+        <div>
+          <h1>Batches</h1>
+          <p class="subtitle">Group students together and assign work to the whole group at once.</p>
+        </div>
+      </div>
+
+      <div class="batches-layout">
+        <div>
+          <div class="card section-card">
+            <div class="section-title"><i class="ti ti-plus"></i> New batch</div>
+            <form id="new-batch-form">
+              <div class="field">
+                <label for="batch-name-input">Batch name</label>
+                <input type="text" id="batch-name-input" placeholder="e.g. Python Basics - Morning" required />
+              </div>
+              <button type="submit" class="btn btn-primary btn-sm">Create batch</button>
+            </form>
+          </div>
+
+          <div class="card section-card">
+            <div class="section-title"><i class="ti ti-users"></i> All batches</div>
+            <div id="batch-list"></div>
+          </div>
+        </div>
+
+        <div class="card section-card" id="batch-detail">
+          <div class="empty-state">
+            <div class="icon"><i class="ti ti-hand-click"></i></div>
+            <div>Select a batch to view and manage its members.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/worksheet-viewer.js"></script>
+  <script src="../js/instructor/assign-sheets.js"></script>
+  <script src="../js/instructor/batches.js"></script>
+</body>
+</html>

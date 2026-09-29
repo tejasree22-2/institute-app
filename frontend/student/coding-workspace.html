@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Coding Workspace — Institute App</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css" />
+  <link rel="stylesheet" href="../css/main.css" />
+  <link rel="stylesheet" href="../css/workspace.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <div class="topbar">
+      <div class="brand"><span class="dot"></span>Institute App</div>
+      <nav>
+        <a href="dashboard.html">Dashboard</a>
+      </nav>
+      <div class="userbox">
+        <span class="avatar" id="user-avatar"></span>
+        <span id="user-name"></span>
+        <button class="btn-logout" onclick="logout()">Log out</button>
+      </div>
+    </div>
+
+    <div class="workspace-shell">
+      <div class="workspace-topbar">
+        <div class="q-title">
+          <a href="tasks.html?type=coding" title="Back to coding tasks" style="color: var(--text-muted);"><i class="ti ti-arrow-left"></i></a>
+          <span id="q-title-text">Loading…</span>
+          <span id="q-difficulty-pill"></span>
+        </div>
+        <div class="actions">
+          <button class="btn btn-secondary btn-sm" id="run-btn"><i class="ti ti-player-play"></i> Run</button>
+          <button class="btn btn-primary btn-sm" id="submit-btn"><i class="ti ti-send"></i> Submit</button>
+        </div>
+      </div>
+
+      <div class="workspace-body">
+        <div class="problem-pane" id="problem-pane">
+          <p class="small-muted">Loading problem…</p>
+        </div>
+
+        <div class="workbench-pane">
+          <div class="editor-wrap">
+            <div class="editor-toolbar">
+              <span>solution.py</span>
+              <span id="editor-hint">Python 3</span>
+            </div>
+            <div class="cm-editor-host" id="editor-host"></div>
+          </div>
+
+          <div class="tabs-panel">
+            <div class="tabs-bar">
+              <button class="tab-btn active" data-tab="results">Test Results</button>
+              <button class="tab-btn" data-tab="terminal">Terminal</button>
+            </div>
+            <div class="tab-content" id="tab-results">
+              <p class="small-muted">Click <strong>Run</strong> to test against the visible sample cases, or <strong>Submit</strong> to run against all test cases.</p>
+            </div>
+            <div class="tab-content" id="tab-terminal" hidden>
+              <div class="terminal-box" id="terminal-box">$ waiting for run…</div>
+            </div>
+          </div>
+
+          <div class="notes-panel">
+            <label>Notes <span class="notes-saved-hint" id="notes-saved-hint">Saved</span></label>
+            <textarea id="notes-area" placeholder="Jot down your understanding, doubts, or approach here. Autosaved when you click away."></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script type="module" src="../js/student/workspace.js"></script>
+</body>
+</html>

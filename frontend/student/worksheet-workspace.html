@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Worksheet — Institute App</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body class="ws-page">
+  <div class="app-shell">
+    <div class="topbar">
+      <div class="brand"><span class="dot"></span>Institute App</div>
+      <nav>
+        <a href="dashboard.html">Dashboard</a>
+      </nav>
+      <div class="userbox">
+        <span id="batch-name-label"></span>
+        <span class="avatar" id="user-avatar"></span>
+        <span id="user-name"></span>
+        <button class="btn-logout" onclick="logout()">Log out</button>
+      </div>
+    </div>
+
+    <div class="page">
+      <div class="page-header">
+        <div>
+          <a href="tasks.html?type=worksheet" class="back-link"><i class="ti ti-arrow-left"></i> Worksheet Tasks</a>
+          <div class="ws-title-row">
+            <h1 id="w-title">Loading…</h1>
+            <div class="ws-head-pills" id="w-pills"></div>
+          </div>
+          <p class="subtitle" id="w-description"></p>
+        </div>
+      </div>
+
+      <div id="viewer"></div>
+    </div>
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/worksheet-viewer.js"></script>
+  <script src="../js/student/worksheet-workspace.js"></script>
+</body>
+</html>
