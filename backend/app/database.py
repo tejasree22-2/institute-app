@@ -55,6 +55,9 @@ _ADDED_COLUMNS = {
         "rel_path": "VARCHAR",
         "label": "VARCHAR",
     },
+    "stored_files": {
+        "etag": "VARCHAR",
+    },
 }
 
 

@@ -217,4 +217,6 @@ class StoredFile(Base):
     key = Column(String, primary_key=True)  # "uploads/<worksheet id>/<name>" or "content/<subject>/<path>"
     data = Column(LargeBinary, nullable=False)
     content_type = Column(String, nullable=True)
+    # the source's ETag for synced files: the next sync asks "changed since?" and skips unchanged downloads
+    etag = Column(String, nullable=True)
     updated_at = Column(DateTime, default=now, onupdate=now)

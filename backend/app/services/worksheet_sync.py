@@ -49,6 +49,14 @@ class UrlSource:
     def __init__(self, base_url):
         self.base = base_url if base_url.endswith("/") else base_url + "/"
         self._conn, self._origin = None, None
+        # conditional downloads: {rel: (bytes, etag)} from the last sync, filled by prime();
+        # a file the server says is unchanged (HTTP 304) is taken from here instead of re-downloaded
+        self._cache: dict[str, tuple[bytes, str | None]] = {}
+        self.etags: dict[str, str] = {}
+        self.stats = {"downloaded": 0, "not_modified": 0}
+
+    def prime(self, files):
+        self._cache.update(files)
 
     def _connect(self, scheme, host, port):
         last_err = None
@@ -68,7 +76,7 @@ class UrlSource:
             return conn
         raise SyncError(f"Could not connect to {host}: {last_err}")
 
-    def _get(self, url):
+    def _get(self, url, headers=None):
         parts = urllib.parse.urlsplit(url)
         origin = (parts.scheme, parts.hostname, parts.port or (443 if parts.scheme == "https" else 80))
         path = parts.path + (f"?{parts.query}" if parts.query else "")
@@ -78,9 +86,9 @@ class UrlSource:
                     self._conn.close()
                 self._conn, self._origin = self._connect(*origin), origin
             try:
-                self._conn.request("GET", path, headers={"User-Agent": "institute-app-worksheet-sync"})
+                self._conn.request("GET", path, headers={"User-Agent": "institute-app-worksheet-sync", **(headers or {})})
                 res = self._conn.getresponse()
-                return res.status, res.getheader("Location"), res.read()
+                return res.status, res.getheader("Location"), res.read(), res.getheader("ETag")
             except (http.client.HTTPException, OSError):
                 self._conn.close()
                 self._conn = None
@@ -89,15 +97,24 @@ class UrlSource:
 
     def read(self, rel):
         url = urllib.parse.urljoin(self.base, rel)
+        cached = self._cache.get(rel)
+        headers = {"If-None-Match": cached[1]} if cached and cached[1] else None
         for _ in range(5):
-            status, location, data = self._get(url)
+            status, location, data, etag = self._get(url, headers)
             if status in (301, 302, 303, 307, 308) and location:
                 url = urllib.parse.urljoin(url, location)
                 continue
+            if status == 304 and cached:
+                self.etags[rel] = cached[1]
+                self.stats["not_modified"] += 1
+                return cached[0]
             if status == 404:
                 return None
             if status >= 400:
                 raise SyncError(f"{url} answered HTTP {status}")
+            if etag:
+                self.etags[rel] = etag
+            self.stats["downloaded"] += 1
             return data
         raise SyncError(f"Too many redirects for {url}")
 
@@ -106,6 +123,12 @@ class UrlSource:
 
 
 class RepoSource:
+    etags: dict[str, str] = {}
+    stats: dict[str, int] = {}
+
+    def prime(self, files):
+        pass  # local files are read directly; nothing to skip
+
     def __init__(self, path):
         self.root = os.path.abspath(path)
         if not os.path.isfile(os.path.join(self.root, "index.html")) and os.path.isfile(os.path.join(self.root, "docs", "index.html")):
@@ -280,17 +303,25 @@ def sync_subject(db, source, slug, name, instructor_id, log=print):
     log(f"{name}: {len(tasks)} item(s)")
 
     # build the new mirror in a temp dir (with the previous copy next to it, for pages taken off the
-    # repo), then store it in place of the old one, so files removed upstream disappear too
+    # repo), then store only what changed: files the server reports unchanged aren't re-downloaded,
+    # new files are inserted, changed ones updated, and files removed upstream deleted
     prefix = file_store.content_key(f"{slug}/")
     pages = [href for t in tasks for href, _ in t["files"].values()]
+    old = file_store.load_prefix(db, prefix)
+    source.prime({f"{slug}/{rel}": entry for rel, entry in old.items()})
+    before = dict(source.stats)
     with tempfile.TemporaryDirectory() as work:
         old_dir, new_dir = os.path.join(work, "old"), os.path.join(work, "new")
-        file_store.export_prefix(db, prefix, old_dir)
+        file_store.write_dir(old, old_dir)
         source.mirror(slug, new_dir, pages, log)
         os.makedirs(new_dir, exist_ok=True)
         in_repo = {page for page in pages if os.path.isfile(os.path.join(new_dir, page))}
         keep_missing_pages(old_dir, new_dir, pages, log)
-        stored = file_store.replace_prefix(db, prefix, new_dir)
+        etags = {rel[len(slug) + 1:]: tag for rel, tag in source.etags.items() if rel.startswith(slug + "/")}
+        stored, counts = file_store.sync_prefix(db, prefix, new_dir, old, etags)
+    skipped = source.stats.get("not_modified", 0) - before.get("not_modified", 0)
+    log(f"  files: {counts['new']} new, {counts['updated']} updated, {counts['unchanged']} unchanged"
+        f"{f' ({skipped} not re-downloaded)' if skipped else ''}, {counts['removed']} removed")
 
     now = datetime.now(timezone.utc)
     synced_keys, report = set(), []
