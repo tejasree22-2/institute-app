@@ -28,8 +28,14 @@ def _jwt_secret() -> str:
     return _DEV_JWT_SECRET
 
 
+# the deployed frontend (Render static site). If Render gives it a different URL, change it here (or set
+# the CORS_ORIGINS environment variable, which replaces this list), then push.
+FRONTEND_URLS = ["https://institute-app-web.onrender.com"]
+LOCAL_FRONTEND_URLS = ["http://localhost:8080", "http://127.0.0.1:8080", "http://localhost:8888", "http://127.0.0.1:8888"]
+
+
 def _cors_origins() -> list[str]:
-    default = "" if IS_PRODUCTION else "http://localhost:8080,http://127.0.0.1:8080,http://localhost:8888,http://127.0.0.1:8888"
+    default = ",".join(FRONTEND_URLS if IS_PRODUCTION else LOCAL_FRONTEND_URLS + FRONTEND_URLS)
     origins = []
     for origin in os.environ.get("CORS_ORIGINS", default).split(","):
         origin = origin.strip().rstrip("/")
@@ -41,6 +47,11 @@ def _cors_origins() -> list[str]:
 
 def _database_url() -> str:
     url = os.environ.get("DATABASE_URL", "").strip()
+    # forgive the usual paste slips in a hosting dashboard: the "DATABASE_URL=" prefix, or quotes
+    if url.startswith("DATABASE_URL="):
+        url = url[len("DATABASE_URL="):].strip()
+    if len(url) >= 2 and url[0] == url[-1] and url[0] in "\"'":
+        url = url[1:-1].strip()
     if not url:
         if IS_PRODUCTION:
             # a SQLite file on a free host's disk is wiped on every restart
@@ -49,8 +60,31 @@ def _database_url() -> str:
     # Supabase hands out postgres:// / postgresql:// URLs; SQLAlchemy needs the driver named
     for scheme in ("postgres://", "postgresql://"):
         if url.startswith(scheme):
-            return "postgresql+psycopg://" + url[len(scheme):]
+            url = "postgresql+psycopg://" + url[len(scheme):]
+            break
+    _check_database_url(url)
     return url
+
+
+def _check_database_url(url: str):
+    """Fail with a readable hint (never the password) instead of SQLAlchemy's bare parse error."""
+    from sqlalchemy.engine import make_url
+    from sqlalchemy.exc import ArgumentError
+
+    problem = None
+    if any(c.isspace() for c in url):
+        problem = "it contains a space or line break"
+    elif "[YOUR-PASSWORD]" in url or "<" in url:
+        problem = "it still contains a placeholder like [YOUR-PASSWORD] or <project-ref>"
+    else:
+        try:
+            parsed = make_url(url)
+            if parsed.drivername.startswith("postgresql") and not parsed.host:
+                problem = "no host found — if the password has @ # / ? : characters, URL-encode them (@ → %40, # → %23, / → %2F)"
+        except ArgumentError:
+            problem = "it isn't a URL — it should start with postgresql://"
+    if problem:
+        raise RuntimeError(f"DATABASE_URL is invalid: {problem}. It starts with {url[:24]!r}…")
 
 
 class Settings:
